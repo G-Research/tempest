@@ -575,9 +575,13 @@ class KeystoneV3AuthProvider(KeystoneAuthProvider):
         if not filtered_catalog:
             # No matching type, keep all and try matching by region at least
             filtered_catalog = service_catalog
-        # Filter by region
-        filtered_catalog = [ep for ep in filtered_catalog if
-                            ep['region'] == region]
+        # Filter by region only if the variable has a value
+        if region:
+            # Only update filtered_catalog if an endpoint with a matching region is found
+            matching_region = [ep for ep in filtered_catalog if
+                                ep['region'] == region]
+            if matching_region:
+                filtered_catalog = matching_region
         if not filtered_catalog:
             # No matching region (or name), take the first endpoint
             filtered_catalog = [service_catalog[0]]
